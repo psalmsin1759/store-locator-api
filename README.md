@@ -1,6 +1,6 @@
-# Store Locator API with Laravel Sail and Swagger
+# Store Locator API with Laravel Sail (Docker) and Swagger
 
-![Swagger](assets/images/swagger.png)
+<img src="screenshots/swagger.png" alt="Swagger" />
 
 ## Introduction
 
