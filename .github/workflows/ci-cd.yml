@@ -29,9 +29,6 @@ jobs:
       - name: Install JavaScript dependencies
         run: npm install
 
-      - name: Build assets (if applicable)
-        run: npm run production
-
       - name: Get next version
         uses: reecetech/version-increment@2023.4.1
         id: version
