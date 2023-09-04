@@ -146,6 +146,6 @@ Remember that this is just the beginning. You can extend this API by adding feat
 
 ## External Resources
 
-[Laravel Documentation](https://laravel.com/docs) - Official Laravel documentation to explore more Laravel features.
-[Google Places API Documentation](https://developers.google.com/maps/documentation/places/overview) - Official documentation for Google Places API to learn about its capabilities.
+[Laravel Documentation](https://laravel.com/docs) - Official Laravel documentation to explore more Laravel features. <br/>
+[Google Places API Documentation](https://developers.google.com/maps/documentation/places/overview) - Official documentation for Google Places API to learn about its capabilities. <br/>
 [Swagger Documentation](https://swagger.io/docs/) - Explore Swagger documentation to dive deeper into API documentation and design.
