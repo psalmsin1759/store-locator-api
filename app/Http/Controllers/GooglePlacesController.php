@@ -105,7 +105,7 @@ class GooglePlacesController extends Controller
      *     @OA\Response(
      *         response="200",
      *         description="List of store locations",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/StoreLocation")),
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Coordinates")),
      *     ),
      * )
      */

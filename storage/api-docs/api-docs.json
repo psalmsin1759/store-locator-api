@@ -11,6 +11,28 @@
     },
     "paths": {
         "/api/store-locations": {
+            "get": {
+                "tags": [
+                    "Store Locations"
+                ],
+                "summary": "Get all store locations",
+                "operationId": "8f4b1f006cc0d22c2259b32200584ac9",
+                "responses": {
+                    "200": {
+                        "description": "List of store locations",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Coordinates"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "Store Locations"
