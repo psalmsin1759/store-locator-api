@@ -39,8 +39,10 @@ class GooglePlacesController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="storeaddress", type="string", example="25 admiralty road, Lekki, Lagos"),
-     *         )
+     *              @OA\Property(property="storename", type="string", maxLength=255, example="KFC Lekki"),
+     *              @OA\Property(property="storeaddress", type="string", maxLength=255, example="25 Admiralty road, Lekki, Lagos"),
+     *             )
+     *         
      *     ),
      *     @OA\Response(
      *         response="200",
@@ -62,6 +64,7 @@ class GooglePlacesController extends Controller
     public function storeLocation(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'storename' => 'required|string|max:255',
             'storeaddress' => 'required|string|max:255',
         ]);
     
@@ -70,6 +73,7 @@ class GooglePlacesController extends Controller
         }
 
         $storeAddress = $request->storeaddress;
+        $storeName = $request->storename;
 
         $apiKey = env('GOOGLE_PLACES_API_KEY');
 
@@ -82,12 +86,13 @@ class GooglePlacesController extends Controller
 
         $data = $response->json();
 
+       
         if ($response->successful() && isset($data['candidates'][0]['geometry']['location'])) {
             $location = $data['candidates'][0];
 
-            $storeLocation = storeLocation::create([
-                "name" => $location['name'],
-                "address" => $location['formatted_address'],
+            $storeLocation = StoreLocation::create([
+                "name" => $storeName,
+                "address" => $storeAddress,
                 "latitude" =>  $location['geometry']['location']['lat'],
                 "longitude" => $location['geometry']['location']['lng']
             ]);

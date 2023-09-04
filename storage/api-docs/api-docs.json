@@ -45,9 +45,15 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
+                                    "storename": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "KFC Lekki"
+                                    },
                                     "storeaddress": {
                                         "type": "string",
-                                        "example": "25 admiralty road, Lekki, Lagos"
+                                        "maxLength": 255,
+                                        "example": "25 Admiralty road, Lekki, Lagos"
                                     }
                                 },
                                 "type": "object"

@@ -1,66 +1,151 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Store Locator API with Laravel Sail and Swagger
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![Swagger](assets/images/swagger.png)
 
-## About Laravel
+## Introduction
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+In today's fast-paced world, convenience is key. Whether you're a business owner looking to attract and engage customers or a tech enthusiast aiming to simplify everyday tasks, having the ability to quickly locate nearby stores or points of interest is a game-changer. Imagine a user-friendly solution that seamlessly integrates with your application, allowing users to effortlessly find the nearest stores, restaurants, or service centers based on their preferences. This is where a Store Locator API comes into play.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Creating a Laravel API to fetch longitude and latitude from Google Places involves several steps. In this guide, I'll walk you through the process step by step. Before we start, ensure you have Laravel installed and set up on your development environment.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Getting Started
 
-## Learning Laravel
+### Step 1: Set Up a New Laravel Sail Project
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+If you haven't already created a Laravel project, you can do so using Composer:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+curl -s "https://laravel.build/storelocatorapi" | bash
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+After the project has been created, you can navigate to the application directory and start Laravel Sail. Laravel Sail provides a simple command-line interface for interacting with Laravel's default Docker configuration:
 
-## Laravel Sponsors
+```bash
+./vendor/bin/sail up
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Please make sure you have Docker installed and running
 
-### Premium Partners
+## Step 2: Configure Your .env File
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+Next, configure your .env file with your Google Places API key. You can obtain an API key by following the instructions on the Google Cloud Platform Console.
 
-## Contributing
+```bash
+ GOOGLE_PLACES_API_KEY=your_api_key_here
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Step 3: Create a Migration and Model
 
-## Code of Conduct
+Create a migration and model to represent the store locations:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+ ./vendor/bin/sail php artisan make:model StoreLocation -m
+```
 
-## Security Vulnerabilities
+-   Edit the migration file to define the table structure in the database/migrations directory. For example:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+public function up()
+{
+    Schema::create('store_locations', function (Blueprint $table) {
+        $table->id();
+        $table->string('name');
+        $table->string('address');
+        $table->decimal('latitude', 10, 7);
+        $table->decimal('longitude', 10, 7);
+        $table->timestamps();
+    });
+}
 
-## License
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+-   Then, run the migration to create the store_locations table:
+
+```bash
+./vendor/bin/sail php artisan migrate
+
+```
+
+### Step 4: Update the Controller
+
+Modify the Controller.php to handle storing store locations:
+
+<img src="screenshots/storelocator.png" alt="Save Store Location" />
+
+### Step 5: Create a Route for Storing Locations
+
+In routes/api.php, add a new route for storing store locations:
+
+```bash
+Route::post('/store-locations', [GooglePlacesController::class, 'storeLocation']);
+
+
+```
+
+## Step 6: Create an API to Get Store Locations
+
+Create an API to retrieve store locations:
+
+```bash
+Route::get('/store-locations', [GooglePlacesController::class, 'getStoreLocations']);
+
+
+```
+
+<img src="screenshots/getstorelocation.png" alt="get Store Location" />
+
+To document your Laravel API endpoints for the storeLocation and getStoreLocations actions using Swagger documentation, you can follow these additional steps:
+
+### Step 7: Install Laravel Swagger
+
+You'll need to use a package like darkaonline/l5-swagger to generate Swagger documentation for your Laravel API. Install it via Composer:
+
+```bash
+./vendor/bin/sail composer require darkaonline/l5-swagger
+
+
+```
+
+### Step 8: Publish Configuration Files
+
+After installing the package, you need to publish its configuration files:
+
+```bash
+./vendor/bin/sail php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider"
+
+
+```
+
+This will create a config/l5-swagger.php configuration file.
+
+### Step 9: Annotate Your Controller Methods
+
+<img src="screenshots/annotation.png" alt="Swaggger Annotation" />
+
+### Step 10: Generate Swagger Documentation
+
+```bash
+./vendor/bin/sail php artisan l5-swagger:generate
+```
+
+-   This command will generate a JSON Swagger documentation file and make it accessible at the specified path, typically /api/documentation.
+
+### Step 11: Access and Test Swagger Documentation
+
+You can access the Swagger documentation in your web browser at http://localhost/api/documentation. Here, you can interactively test your API endpoints, view their documentation, and even export the API definitions in various formats.
+
+## Conclusion
+
+In this blog post, we explored the process of creating a Store Locator API using Laravel, integrating it with the Google Places API, and documenting it with Swagger. This powerful API allows you to store and retrieve store locations, making it easy for users to find the nearest stores based on their preferences.
+
+We started by setting up Laravel and configuring the Google Places API key, ensuring a secure and functional integration. Then, we implemented endpoints to store store location data, call the Google Places API to obtain latitude and longitude coordinates, and retrieve store locations.
+
+To make our API developer-friendly, we used Swagger for documentation. This interactive documentation allows developers to understand the endpoints, request parameters, and response structures, making it easier to integrate the API into their applications.
+
+Remember that this is just the beginning. You can extend this API by adding features such as search, filtering, and user authentication to enhance the user experience.
+
+## External Resources
+
+[Laravel Documentation](https://laravel.com/docs) - Official Laravel documentation to explore more Laravel features.
+[Google Places API Documentation](https://developers.google.com/maps/documentation/places/overview) - Official documentation for Google Places API to learn about its capabilities.
+[Swagger Documentation](https://swagger.io/docs/) - Explore Swagger documentation to dive deeper into API documentation and design.
