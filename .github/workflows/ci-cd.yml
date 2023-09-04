@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.0"
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Install Node.js and npm
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - name: Install JavaScript dependencies
+        run: npm install
+
+      - name: Build assets (if applicable)
+        run: npm run production
+
+      - name: Get next version
+        uses: reecetech/version-increment@2023.4.1
+        id: version
+        with:
+          scheme: semver
+          increment: patch
+
+      - name: Create a release archive
+        run: |
+          mkdir release
+          tar -czvf release/my_project_version.tar.gz .
+        env:
+          PROJECT_VERSION: ${{ steps.version.outputs.version }}
+
+      - name: Upload release to GitHub
+        uses: actions/upload-artifact@v2
+        with:
+          name: my_project
+          path: release/my_project_version.tar.gz
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release/my_project_version.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+
+      - name: Publish release
+        run: |
+          echo "Release ${{ steps.create_release.outputs.upload_url }} created"
+        if: success()
